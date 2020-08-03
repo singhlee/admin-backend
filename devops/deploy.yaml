@@ -1,0 +1,75 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: admin-backend
+  namespace: mr-external
+spec:
+  replicas: 1
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      project: admin-backend
+      app: admin-backend
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        project: admin-backend
+        app: admin-backend
+    spec:
+      imagePullSecrets:
+      - name: harborkey-176
+      containers:
+      - name: admin-backend
+        image: 10.10.10.176/external/environment/external_admin-backend:latest
+        imagePullPolicy: Always
+        readinessProbe:
+          tcpSocket:
+            port: 18080
+          initialDelaySeconds: 60
+          periodSeconds: 10
+        env:
+        - name: ENV
+          value: "environment" 
+        ports:
+        - containerPort: 18080
+          name: web
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 800Mi
+          requests:
+            cpu: 500m
+            memory: 500Mi
+        volumeMounts:
+        - mountPath: /logs/
+          name: log
+      volumes:
+      - name: log
+        hostPath:
+          path: /opt/docker/logs/
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: admin-backend
+  namespace: mr-external
+  labels:
+    project: admin-backend
+    app: admin-backend
+spec:
+  selector:
+    project: admin-backend
+    app: admin-backend
+  ports:
+  - name: admin-backend-port
+    port: 18080
+    targetPort: 18080
+    protocol: TCP
+  type: ClusterIP

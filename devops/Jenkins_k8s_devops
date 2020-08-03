@@ -1,0 +1,56 @@
+pipeline{
+	agent any
+	environment{
+		repository="http://gitlab.laozicloud.net:7777/external_projects/haers-customization.git"
+		J_W_DIR='/usr/local/tomcat-jenkins/data/workspace/'
+		JAVA_HOME="/usr"
+		MAVEN_HOME="/usr/local/maven/bin"
+		PROJECT_NAME="external_haers-customization"
+		H_PROJECT="external_projects"
+		ES_DIR="$PROJECT_NAME"
+		PROJECT_DIR="/usr/local/jar"
+		PROJECT_PORT="18080"
+		HARBOR="10.10.10.176"
+		H_USER="admin"
+		H_PASSWD="Harbor12345"
+		KUBE_HOME="/opt/kube/bin"
+	}
+	stages{
+		stage('get code'){
+		steps{
+			echo "start get code from git:${repository}"
+			deleteDir()
+			git branch: 'test', credentialsId: '414fb268-6da4-415c-a308-bdfce7a9dee7', url: "${repository}"
+		}
+		}
+		stage('mvn code'){
+		steps{
+		    sh '''
+		    echo "start mvn code from git:${repository}"
+		    $MAVEN_HOME/mvn clean install -s ./pom.xml
+		    '''
+		}
+		}
+	    stage('build $PROJECT_NAM docker image'){
+		steps{
+		    sh '''
+            ssh root@127.0.0.1 "docker login -u $H_USER -p $H_PASSWD $HARBOR"
+            ssh root@127.0.0.1 "cd $J_W_DIR/$PROJECT_NAME;docker build -t $HARBOR/${H_PROJECT}/$Env/$PROJECT_NAME:${Tag} -f ./devops/Dockerfile ."
+            ssh root@127.0.0.1 "cd $J_W_DIR/$PROJECT_NAME;docker push $HARBOR/${H_PROJECT}/$Env/$PROJECT_NAME:${Tag}"
+            '''
+		}
+		}
+		
+		stage('deploy to k8s'){
+		steps{
+		    sh '''
+		    cd $J_W_DIR/$PROJECT_NAME/devops
+		    sed -i "s/haers-customization:latest/haers-customization:${Tag}/" deploy.yaml
+		    sed -i "s/environment/${Env}/" deploy.yaml
+            ssh root@127.0.0.1 "cd $J_W_DIR/$PROJECT_NAME;$KUBE_HOME/kubectl apply -f ./devops/deploy.yaml --record;sleep 2"
+            '''
+		}
+		}
+		
+	}
+}

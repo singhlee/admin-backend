@@ -1,0 +1,44 @@
+# Tomcat
+server:
+  port: 18080
+spring:
+  profiles:
+    active: dev
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+  servlet:
+    multipart:
+      maxFileSize: 104857600 #100MB
+      maxRequestSize: 104857600 #100MB
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+logging:
+  config: classpath:logback-spring.xml
+
+mybatis-plus:
+  config-location: classpath:mybatis.cfg.xml
+  mapper-locations: classpath*:org/laozicloud/haers/*/mapper/*.xml
+  global-config:
+    banner: false
+    db-config:
+      db-type: mysql
+      logic-delete-value: 1 # 逻辑已删除值(默认为 1)
+      logic-not-delete-value: 0 # 逻辑未删除值(默认为 0)
+
+jwt:
+  header: token
+  secret: $cbs+ytyj
+  access_token:
+    expiration: 43200
+  refresh_token:
+    expiration: 43200
+  tokenHead: Bearer
+  validTime: 1
+  ignored: /swagger-ui.html,/doc.html,/swagger-resources/**, /webjars/**, /v2/**, /swagger-ui.html/**,/admin/login,/admin/logout,/api/**,/admin/ssoLogin,/admin/getToken
+
+

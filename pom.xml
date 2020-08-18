@@ -26,15 +26,14 @@
         <commons.io.version>2.5</commons.io.version>
         <commons.configuration.version>1.10</commons.configuration.version>
         <commons.lang3.version>3.7</commons.lang3.version>
-        <fastjson.version>1.2.70</fastjson.version>
         <commons.collections4.version>4.4</commons.collections4.version>
-        <jjwt.version>0.9.1</jjwt.version>
         <commons.pool2.version>2.6.2</commons.pool2.version>
-        <obs.version>3.0.3</obs.version>
+        <commons-codec>1.14</commons-codec>
+        <fastjson.version>1.2.70</fastjson.version>
+        <jjwt.version>0.9.1</jjwt.version>
         <hutool.version>5.3.5</hutool.version>
         <mybatis-spring>3.3.2</mybatis-spring>
         <swagger-annotations>1.5.22</swagger-annotations>
-        <commons-codec>1.14</commons-codec>
         <javassist>3.27.0-GA</javassist>
         </properties>
 
@@ -77,11 +76,11 @@
         </dependency>
 
         <!--commons 相关-->
-        <dependency>
-            <groupId>commons-fileupload</groupId>
-            <artifactId>commons-fileupload</artifactId>
-            <version>${commons.fileupload.version}</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>commons-fileupload</groupId>-->
+<!--            <artifactId>commons-fileupload</artifactId>-->
+<!--            <version>${commons.fileupload.version}</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
@@ -106,6 +105,12 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-pool2</artifactId>
             <version>${commons.pool2.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>${commons-codec}</version>
         </dependency>
         <!-- 监控端点-->
         <dependency>
@@ -155,18 +160,7 @@
             <artifactId>jjwt</artifactId>
             <version>${jjwt.version}</version>
         </dependency>
-        <!-- huawei obs-->
-        <dependency>
-            <groupId>com.huawei.storage</groupId>
-            <artifactId>esdk-obs-java</artifactId>
-            <version>${obs.version}</version>
-        </dependency>
 
-        <dependency>
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
-            <version>${commons-codec}</version>
-        </dependency>
 
         <dependency>
             <groupId>org.javassist</groupId>
